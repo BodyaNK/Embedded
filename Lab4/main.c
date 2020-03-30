@@ -7,7 +7,6 @@
 #include <stm32f4xx_exti.h>
 
 uint8_t whoAmI;
-
 uint16_t dataX;
 uint16_t dataY;
 uint16_t dataZ;
@@ -19,25 +18,24 @@ void CS_OFF(void) {
   GPIO_SetBits(GPIOE, GPIO_Pin_3);
 }
 
-void spi_init_pin (void)
+void gpio_init (void)
 {
-  GPIO_InitTypeDef GPIO_Init_Pins;
-  SPI_InitTypeDef SPI_Init_user;
-
-  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
-  
-  GPIO_Init_Pins.GPIO_Pin = GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7;
+	GPIO_InitTypeDef GPIO_Init_Pins;
+	
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+	
+	GPIO_Init_Pins.GPIO_Pin = GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7;
   GPIO_Init_Pins.GPIO_Mode = GPIO_Mode_AF;
   GPIO_Init_Pins.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init_Pins.GPIO_PuPd = GPIO_PuPd_NOPULL;
 
   GPIO_Init(GPIOA, &GPIO_Init_Pins);
-
-  GPIO_PinAFConfig(GPIOA, GPIO_PinSource5, GPIO_AF_SPI1);
+	
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource5, GPIO_AF_SPI1);
   GPIO_PinAFConfig(GPIOA, GPIO_PinSource6, GPIO_AF_SPI1);
   GPIO_PinAFConfig(GPIOA, GPIO_PinSource7, GPIO_AF_SPI1);
-  
-  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE, ENABLE);
+	
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE, ENABLE);
 
   GPIO_Init_Pins.GPIO_Pin = GPIO_Pin_3;
   GPIO_Init_Pins.GPIO_Mode = GPIO_Mode_OUT;
@@ -46,8 +44,13 @@ void spi_init_pin (void)
   GPIO_Init_Pins.GPIO_PuPd = GPIO_PuPd_NOPULL;
 
   GPIO_Init(GPIOE, &GPIO_Init_Pins);
+	
+	CS_OFF();
+}
 
-  CS_OFF();
+void spi_init_pin (void)
+{
+  SPI_InitTypeDef SPI_Init_user;
 
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE);
 
@@ -97,6 +100,7 @@ uint8_t Read_Val_Reg (uint8_t address)
 }
 
 int main(void) {
+	gpio_init();
   spi_init_pin();
 
   whoAmI = Read_Val_Reg(0x0F);
