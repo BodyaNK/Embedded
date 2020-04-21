@@ -1,0 +1,6 @@
+lcd_letter_b,
+lcd_letter_o,
+lcd_letter_d,
+lcd_letter_y,
+lcd_letter_a,
+lcd_logo_mas,
